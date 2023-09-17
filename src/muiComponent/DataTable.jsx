@@ -6,9 +6,17 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Box, Container } from "@mui/material";
+import { Box, Button, Container } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Edit, EditNotifications } from "@mui/icons-material";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
 
 const DataTable = ({ data }) => {
+  const handleClick = (data) => {
+    // Handle the button click event here
+    console.log("Data", data);
+  };
+
   return (
     <Container fixed>
       <Box>
@@ -18,15 +26,36 @@ const DataTable = ({ data }) => {
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
+                <TableCell>Address</TableCell>
+                <TableCell>Gender</TableCell>
+                <TableCell>Phone</TableCell>
+                <TableCell>DOB</TableCell>
+                <TableCell>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {data.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.id}</TableCell>
+                <TableRow key={row._id}>
+                  <TableCell>{row._id}</TableCell>
                   <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.email}</TableCell>
+                  <TableCell>{row.address}</TableCell>
+                  <TableCell>{row.gender}</TableCell>
+                  <TableCell>{row.phoneNum}</TableCell>
+                  <TableCell>{row.dateOfBirth}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      onClick={handleClick(row._id)}
+                      startIcon={<BorderColorIcon />}>
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      onClick={handleClick}
+                      startIcon={<DeleteIcon />}>
+                      Delete
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
