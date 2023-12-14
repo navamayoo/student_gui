@@ -11,12 +11,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Edit, EditNotifications } from "@mui/icons-material";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 
-const DataTable = ({ data }) => {
-  const handleClick = (data) => {
-    // Handle the button click event here
-    console.log("Data", data);
-  };
-
+export default function DataTable({
+  data,
+  handleClickEdit,
+  handleClickDelete,
+}) {
   return (
     <Container fixed>
       <Box>
@@ -45,13 +44,14 @@ const DataTable = ({ data }) => {
                   <TableCell>
                     <Button
                       variant="outlined"
-                      onClick={handleClick(row._id)}
+                      // onClick={handleSecondary}
+                      onClick={() => handleClickEdit(row._id)}
                       startIcon={<BorderColorIcon />}>
                       Edit
                     </Button>
                     <Button
                       variant="outlined"
-                      onClick={handleClick}
+                      onClick={() => handleClickDelete(row._id)}
                       startIcon={<DeleteIcon />}>
                       Delete
                     </Button>
@@ -64,6 +64,4 @@ const DataTable = ({ data }) => {
       </Box>
     </Container>
   );
-};
-
-export default DataTable;
+}
