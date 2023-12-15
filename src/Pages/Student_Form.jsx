@@ -2,11 +2,21 @@ import React, { useEffect, useState } from "react";
 
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
-import { Box, Container } from "@mui/material";
+import {
+  Box,
+  Container,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@mui/material";
 import FormInput from "../muiComponent/FormInput";
 import axios from "axios";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 
-function Student_Form({itemId}) {
+function Student_Form({ editID }) {
   const initialValues = {
     name: "",
     address: "",
@@ -15,7 +25,7 @@ function Student_Form({itemId}) {
     phoneNum: "",
   };
 
-  //  console.log("itemId>>>>", itemId ? itemId : "nothing");
+  console.log("editID>>>>", editID ? editID : "nothing");
   const [formData, setFormData] = useState(initialValues);
   const [isEdit, setIsEdit] = useState(false);
 
@@ -27,24 +37,42 @@ function Student_Form({itemId}) {
     });
   };
 
+  const handleDateChange = (date) => {
+    setFormData({
+      ...formData,
+      dateOfBirth: date,
+    });
+  };
+
   useEffect(() => {
-    if (itemId) {
-      console.log("itemId>>>>", itemId ? itemId : "nothing");
-      // Fetch data if itemId is provided (edit mode)
+    if (editID) {
+      console.log("editID>>>>", editID ? editID : "nothing");
+      // Fetch data if editID is provided (edit mode)
       setIsEdit(true);
-      fetchData(itemId);
+      fetchData(editID);
     } else {
       setIsEdit(false);
     }
-  }, [itemId]);
+  }, [editID]);
 
   const fetchData = async (id) => {
     try {
       const response = await axios.get(
         `http://localhost:5000/api/student/${id}`
       );
-      console.log("Record edited:", response);
-      setFormData(response.data);
+      console.log("Record edited:", response.data);
+      const date = new Date(response.data.dateOfBirth);
+
+      // Get the formatted date string (MM/DD/YYYY)
+      const formattedDate = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+
+      const newData = { ...response.data, dateOfBirth: formattedDate };
+      console.log("newData >>>>>", newData);
+      setFormData(newData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -57,7 +85,7 @@ function Student_Form({itemId}) {
       if (isEdit) {
         // Handle edit logic, make a PUT request
         const response = await axios.put(
-          `http://localhost:5000/api/student/${itemId}`,
+          `http://localhost:5000/api/student/${editID}`,
           formData
         );
         console.log("Record edited:", response.data);
@@ -68,16 +96,19 @@ function Student_Form({itemId}) {
           .then((res) => {
             console.log("crete");
             setFormData(initialValues);
+          })
+          .then((error) => {
+            console.error("Error:", error);
           });
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
-
+  console.log(">>>>>formData >>>>>", formData);
   return (
     <Container fixed>
-      <Box>
+      <Box p={2} width={1000} bgcolor="#f0f0f0" margin="auto">
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={4}>
@@ -101,27 +132,46 @@ function Student_Form({itemId}) {
               />
             </Grid>
             <Grid item xs={4}>
-              <FormInput
+              <RadioGroup
+                name="gender"
+                value={formData.gender}
+                onChange={handleInputChange}
+                row
+              >
+                <FormControlLabel
+                  value="male"
+                  control={<Radio />}
+                  label="Male"
+                />
+                <FormControlLabel
+                  value="female"
+                  control={<Radio />}
+                  label="Female"
+                />
+              </RadioGroup>
+            </Grid>
+            <Grid item xs={4}>
+              {/* <FormInput
                 fullWidth
-                // label="Date of Birth"
+                label="Date of Birth"
                 name="dateOfBirth"
                 type="date"
                 variant="outlined"
-                // value={formatToYYYYMMDD(formData.dateOfBirth)}
                 value={formData.dateOfBirth}
                 onChange={handleInputChange}
-              />
+              /> */}
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DesktopDatePicker
+                  label="Date of Birth"
+                  inputFormat="MM/dd/yyyy"
+                  value={formData.dateOfBirth}
+                  onChange={handleDateChange}
+                  renderInput={(params) => <TextField {...params} />}
+                  fullWidth
+                />
+              </LocalizationProvider>
             </Grid>
-            <Grid item xs={4}>
-              <FormInput
-                fullWidth
-                label="Gender"
-                name="gender"
-                variant="outlined"
-                value={formData.gender}
-                onChange={handleInputChange}
-              />
-            </Grid>
+
             <Grid item xs={4}>
               <FormInput
                 fullWidth

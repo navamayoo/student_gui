@@ -18,10 +18,10 @@ export default function DataTable({
 }) {
   return (
     <Container fixed>
-      <Box>
+      <Box marginTop={2}>
         <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
+          <Table bgcolor="#e0f7fa">
+            <TableHead bgcolor="#006666">
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Name</TableCell>
@@ -46,13 +46,15 @@ export default function DataTable({
                       variant="outlined"
                       // onClick={handleSecondary}
                       onClick={() => handleClickEdit(row._id)}
-                      startIcon={<BorderColorIcon />}>
+                      startIcon={<BorderColorIcon />}
+                    >
                       Edit
                     </Button>
                     <Button
                       variant="outlined"
                       onClick={() => handleClickDelete(row._id)}
-                      startIcon={<DeleteIcon />}>
+                      startIcon={<DeleteIcon />}
+                    >
                       Delete
                     </Button>
                   </TableCell>
