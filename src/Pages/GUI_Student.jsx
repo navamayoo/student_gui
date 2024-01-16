@@ -8,10 +8,11 @@ export default function GUI_Student() {
   const [data, setData] = useState([]);
   const [editID, setEditID] = useState();
   const [deleteCode, setDeleteCode] = useState();
+  const [FormSubmitted, setFormSubmitted] = useState(0);
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [FormSubmitted]);
 
   const loadData = async () => {
     const res = await axios.get("http://localhost:5000/api/student");
@@ -27,11 +28,11 @@ export default function GUI_Student() {
     setDeleteCode(row);
     console.log("handleClickDelete", row);
   };
-  console.log("handle>>>>>>>Edit", editID);
+
   return (
     <div className="App">
       <h1>Material-UI Table Example</h1>
-      <StudentForm editID={editID} />
+      <StudentForm editID={editID} setFormSubmitted={setFormSubmitted} />
       <DataTable
         data={data}
         handleClickEdit={handleClickEdit}

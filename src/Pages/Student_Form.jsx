@@ -12,11 +12,8 @@ import {
 } from "@mui/material";
 import FormInput from "../muiComponent/FormInput";
 import axios from "axios";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 
-function Student_Form({ editID }) {
+function Student_Form({ editID, setFormSubmitted }) {
   const initialValues = {
     name: "",
     address: "",
@@ -62,14 +59,7 @@ function Student_Form({ editID }) {
       );
       console.log("Record edited:", response.data);
       const date = new Date(response.data.dateOfBirth);
-
-      // Get the formatted date string (MM/DD/YYYY)
-      const formattedDate = date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-
+      const formattedDate = date.toLocaleDateString("en-US");
       const newData = { ...response.data, dateOfBirth: formattedDate };
       console.log("newData >>>>>", newData);
       setFormData(newData);
@@ -90,6 +80,7 @@ function Student_Form({ editID }) {
         );
         console.log("Record edited:", response.data);
         setFormData(initialValues);
+        setIsEdit(false);
       } else {
         const res = await axios
           .post("http://localhost:5000/api/student", formData)
@@ -101,11 +92,15 @@ function Student_Form({ editID }) {
             console.error("Error:", error);
           });
       }
+
+      setFormSubmitted((prev) => prev + 1);
     } catch (error) {
       console.error("Error:", error);
     }
   };
+  
   console.log(">>>>>formData >>>>>", formData);
+  const today = new Date().toISOString().split("T")[0];
   return (
     <Container fixed>
       <Box p={2} width={1000} bgcolor="#f0f0f0" margin="auto">
@@ -151,7 +146,7 @@ function Student_Form({ editID }) {
               </RadioGroup>
             </Grid>
             <Grid item xs={4}>
-              {/* <FormInput
+              <FormInput
                 fullWidth
                 label="Date of Birth"
                 name="dateOfBirth"
@@ -159,17 +154,13 @@ function Student_Form({ editID }) {
                 variant="outlined"
                 value={formData.dateOfBirth}
                 onChange={handleInputChange}
-              /> */}
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DesktopDatePicker
-                  label="Date of Birth"
-                  inputFormat="MM/dd/yyyy"
-                  value={formData.dateOfBirth}
-                  onChange={handleDateChange}
-                  renderInput={(params) => <TextField {...params} />}
-                  fullWidth
-                />
-              </LocalizationProvider>
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{
+                  max: today,
+                }}
+              />
             </Grid>
 
             <Grid item xs={4}>
@@ -184,7 +175,7 @@ function Student_Form({ editID }) {
             </Grid>
             <Grid item xs={4}>
               <Button type="submit" variant="contained" color="primary">
-                {isEdit ? "Edit" : "Create"}
+                {isEdit ? "Update" : "Create"}
               </Button>
             </Grid>
           </Grid>
